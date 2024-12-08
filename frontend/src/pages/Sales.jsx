@@ -8,11 +8,13 @@ const Sales = () => {
   const [clients, setClients] = useState([]);
   const [products, setProducts] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
+  const [lunas, setLunas] = useState([]);
   const [client, setClient] = useState('');
   const [product, setProduct] = useState('');
   const [quantity, setQuantity] = useState('');
   const [status, setStatus] = useState('reserved');
   const [campaign, setCampaign] = useState('');
+  const [luna, setLuna] = useState('');
   const [editingSale, setEditingSale] = useState(null);
   const navigate = useNavigate();
 
@@ -97,10 +99,31 @@ const Sales = () => {
       }
     };
 
+    const fetchLunas = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      try {
+        const response = await axios.get('/api/lunas', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setLunas(response.data);
+      } catch (error) {
+        console.error(error);
+        navigate('/login');
+      }
+    };
+
     fetchSales();
     fetchClients();
     fetchProducts();
     fetchCampaigns();
+    fetchLunas();
   }, [navigate]);
 
   const handleCreateOrUpdateSale = async (e) => {
@@ -113,6 +136,7 @@ const Sales = () => {
         quantity,
         status,
         campaign,
+        luna, // Nuevo campo
       };
 
       if (editingSale) {
@@ -144,6 +168,7 @@ const Sales = () => {
       setQuantity('');
       setStatus('reserved');
       setCampaign('');
+      setLuna(''); // Nuevo campo
     } catch (error) {
       console.error(error);
     }
@@ -155,6 +180,7 @@ const Sales = () => {
     setQuantity(sale.quantity);
     setStatus(sale.status);
     setCampaign(sale.campaign._id);
+    setLuna(sale.luna._id); // Nuevo campo
     setEditingSale(sale);
   };
 
@@ -220,12 +246,21 @@ const Sales = () => {
             ))}
           </select>
         </div>
+        <div>
+          <label>Luna</label>
+          <select value={luna} onChange={(e) => setLuna(e.target.value)} required>
+            <option value="">Select Luna</option>
+            {lunas.map(luna => (
+              <option key={luna._id} value={luna._id}>{luna.descripcion}</option>
+            ))}
+          </select>
+        </div>
         <button type="submit">{editingSale ? 'Update' : 'Create'} Sale</button>
       </form>
       <ul>
         {sales.map((sale) => (
           <li key={sale._id}>
-            {sale.client.name} - {sale.product.name} - {sale.status}
+            {sale.client.name} - {sale.product.name} - {sale.luna.descripcion} - {sale.status}
             <button onClick={() => handleEditSale(sale)}>Edit</button>
             <button onClick={() => handleDeleteSale(sale._id)}>Delete</button>
           </li>

@@ -22,10 +22,10 @@ const Login = () => {
 
   return (
     <div>
-      <h1>Login</h1>
+      <h1>Inicio de Sesión</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Username</label>
+          <label>Nombre de Usuario</label>
           <input
             type="text"
             value={username}
@@ -34,7 +34,7 @@ const Login = () => {
           />
         </div>
         <div>
-          <label>Password</label>
+          <label>Contraseña</label>
           <input
             type="password"
             value={password}

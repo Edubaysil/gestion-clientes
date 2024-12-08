@@ -7,6 +7,7 @@ const LunasSchema = new mongoose.Schema({
   color: { type: String, required: true },
   precio: { type: Number, required: true },
   stock: { type: Number, required: true },
+  descripcion: { type: String, required: true }, // Nuevo campo
 });
 
 module.exports = mongoose.model('Lunas', LunasSchema);

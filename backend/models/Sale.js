@@ -7,6 +7,7 @@ const SaleSchema = new mongoose.Schema({
   quantity: { type: Number, required: true },
   status: { type: String, enum: ['reserved', 'to deliver', 'delivered'], default: 'reserved' },
   campaign: { type: mongoose.Schema.Types.ObjectId, ref: 'Campaign', required: true },
+  luna: { type: mongoose.Schema.Types.ObjectId, ref: 'Lunas', required: true }, // Nuevo campo
 });
 
 module.exports = mongoose.model('Sale', SaleSchema);

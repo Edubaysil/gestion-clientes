@@ -4,7 +4,7 @@ import React from 'react';
 const Header = () => {
   return (
     <header>
-      <h1>Gestión de Clientes</h1>
+      <h3>Optica Fama</h3>
     </header>
   );
 };

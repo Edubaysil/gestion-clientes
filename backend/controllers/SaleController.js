@@ -13,7 +13,7 @@ exports.createSale = async (req, res) => {
 
 exports.getSales = async (req, res) => {
   try {
-    const sales = await Sale.find().populate('client product campaign');
+    const sales = await Sale.find().populate('client product campaign luna');
     res.status(200).send(sales);
   } catch (error) {
     res.status(500).send(error);
@@ -22,7 +22,7 @@ exports.getSales = async (req, res) => {
 
 exports.getSale = async (req, res) => {
   try {
-    const sale = await Sale.findById(req.params.id).populate('client product campaign');
+    const sale = await Sale.findById(req.params.id).populate('client product campaign luna');
     if (!sale) {
       return res.status(404).send('Sale not found');
     }

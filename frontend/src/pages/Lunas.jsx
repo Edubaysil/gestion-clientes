@@ -10,6 +10,7 @@ const Lunas = () => {
   const [color, setColor] = useState('');
   const [precio, setPrecio] = useState('');
   const [stock, setStock] = useState('');
+  const [descripcion, setDescripcion] = useState(''); // Nuevo campo
   const [editingLuna, setEditingLuna] = useState(null);
   const navigate = useNavigate();
 
@@ -47,6 +48,7 @@ const Lunas = () => {
         color,
         precio,
         stock,
+        descripcion, // Nuevo campo
       };
 
       if (editingLuna) {
@@ -78,6 +80,7 @@ const Lunas = () => {
       setColor('');
       setPrecio('');
       setStock('');
+      setDescripcion(''); // Nuevo campo
     } catch (error) {
       console.error(error);
     }
@@ -89,6 +92,7 @@ const Lunas = () => {
     setColor(luna.color);
     setPrecio(luna.precio);
     setStock(luna.stock);
+    setDescripcion(luna.descripcion); // Nuevo campo
     setEditingLuna(luna);
   };
 
@@ -155,12 +159,21 @@ const Lunas = () => {
             required
           />
         </div>
+        <div>
+          <label>Descripcion</label>
+          <input
+            type="text"
+            value={descripcion}
+            onChange={(e) => setDescripcion(e.target.value)}
+            required
+          />
+        </div>
         <button type="submit">{editingLuna ? 'Update' : 'Create'} Luna</button>
       </form>
       <ul>
         {lunas.map((luna) => (
           <li key={luna._id}>
-            {luna.material} - {luna.graduacion} - {luna.color} - {luna.precio} - {luna.stock}
+            {luna.material} - {luna.graduacion} - {luna.color} - {luna.precio} - {luna.stock} - {luna.descripcion}
             <button onClick={() => handleEditLuna(luna)}>Edit</button>
             <button onClick={() => handleDeleteLuna(luna._id)}>Delete</button>
           </li>
