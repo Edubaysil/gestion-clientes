@@ -1,4 +1,4 @@
-// frontend/src/components/Login.js
+// src/components/Login/Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -30,6 +30,7 @@ const Login = () => {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
         </div>
         <div>
@@ -38,6 +39,7 @@ const Login = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
         {error && <p>{error}</p>}
