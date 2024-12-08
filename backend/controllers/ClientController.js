@@ -13,7 +13,7 @@ exports.createClient = async (req, res) => {
 
 exports.getClients = async (req, res) => {
   try {
-    const clients = await Client.find();
+    const clients = await Client.find().populate('campaign');
     res.status(200).send(clients);
   } catch (error) {
     res.status(500).send(error);
@@ -22,7 +22,7 @@ exports.getClients = async (req, res) => {
 
 exports.getClient = async (req, res) => {
   try {
-    const client = await Client.findById(req.params.id);
+    const client = await Client.findById(req.params.id).populate('campaign');
     if (!client) {
       return res.status(404).send('Client not found');
     }

@@ -5,11 +5,15 @@ import { useNavigate } from 'react-router-dom';
 
 const Sales = () => {
   const [sales, setSales] = useState([]);
+  const [clients, setClients] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [campaigns, setCampaigns] = useState([]);
   const [client, setClient] = useState('');
   const [product, setProduct] = useState('');
   const [quantity, setQuantity] = useState('');
   const [status, setStatus] = useState('reserved');
   const [campaign, setCampaign] = useState('');
+  const [editingSale, setEditingSale] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,23 +37,108 @@ const Sales = () => {
       }
     };
 
-    fetchSales();
-  }, [navigate]);
+    const fetchClients = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
 
-  const handleCreateSale = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem('token');
-    try {
-      const response = await axios.post(
-        '/api/sales',
-        { client, product, quantity, status, campaign },
-        {
+      try {
+        const response = await axios.get('/api/clients', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
-      );
-      setSales([...sales, response.data]);
+        });
+        setClients(response.data);
+      } catch (error) {
+        console.error(error);
+        navigate('/login');
+      }
+    };
+
+    const fetchProducts = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      try {
+        const response = await axios.get('/api/products', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProducts(response.data);
+      } catch (error) {
+        console.error(error);
+        navigate('/login');
+      }
+    };
+
+    const fetchCampaigns = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      try {
+        const response = await axios.get('/api/campaigns', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setCampaigns(response.data);
+      } catch (error) {
+        console.error(error);
+        navigate('/login');
+      }
+    };
+
+    fetchSales();
+    fetchClients();
+    fetchProducts();
+    fetchCampaigns();
+  }, [navigate]);
+
+  const handleCreateOrUpdateSale = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    try {
+      const saleData = {
+        client,
+        product,
+        quantity,
+        status,
+        campaign,
+      };
+
+      if (editingSale) {
+        const response = await axios.put(
+          `/api/sales/${editingSale._id}`,
+          saleData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setSales(sales.map(s => s._id === editingSale._id ? response.data : s));
+        setEditingSale(null);
+      } else {
+        const response = await axios.post(
+          '/api/sales',
+          saleData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setSales([...sales, response.data]);
+      }
       setClient('');
       setProduct('');
       setQuantity('');
@@ -60,27 +149,50 @@ const Sales = () => {
     }
   };
 
+  const handleEditSale = (sale) => {
+    setClient(sale.client._id);
+    setProduct(sale.product._id);
+    setQuantity(sale.quantity);
+    setStatus(sale.status);
+    setCampaign(sale.campaign._id);
+    setEditingSale(sale);
+  };
+
+  const handleDeleteSale = async (id) => {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.delete(`/api/sales/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setSales(sales.filter(s => s._id !== id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div>
       <h1>Sales</h1>
-      <form onSubmit={handleCreateSale}>
+      <form onSubmit={handleCreateOrUpdateSale}>
         <div>
           <label>Client</label>
-          <input
-            type="text"
-            value={client}
-            onChange={(e) => setClient(e.target.value)}
-            required
-          />
+          <select value={client} onChange={(e) => setClient(e.target.value)} required>
+            <option value="">Select Client</option>
+            {clients.map(client => (
+              <option key={client._id} value={client._id}>{client.name}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label>Product</label>
-          <input
-            type="text"
-            value={product}
-            onChange={(e) => setProduct(e.target.value)}
-            required
-          />
+          <select value={product} onChange={(e) => setProduct(e.target.value)} required>
+            <option value="">Select Product</option>
+            {products.map(product => (
+              <option key={product._id} value={product._id}>{product.name}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label>Quantity</label>
@@ -101,18 +213,22 @@ const Sales = () => {
         </div>
         <div>
           <label>Campaign</label>
-          <input
-            type="text"
-            value={campaign}
-            onChange={(e) => setCampaign(e.target.value)}
-            required
-          />
+          <select value={campaign} onChange={(e) => setCampaign(e.target.value)} required>
+            <option value="">Select Campaign</option>
+            {campaigns.map(campaign => (
+              <option key={campaign._id} value={campaign._id}>{campaign.name}</option>
+            ))}
+          </select>
         </div>
-        <button type="submit">Create Sale</button>
+        <button type="submit">{editingSale ? 'Update' : 'Create'} Sale</button>
       </form>
       <ul>
         {sales.map((sale) => (
-          <li key={sale._id}>{sale.client} - {sale.product} - {sale.status}</li>
+          <li key={sale._id}>
+            {sale.client.name} - {sale.product.name} - {sale.status}
+            <button onClick={() => handleEditSale(sale)}>Edit</button>
+            <button onClick={() => handleDeleteSale(sale._id)}>Delete</button>
+          </li>
         ))}
       </ul>
     </div>
