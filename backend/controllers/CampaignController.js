@@ -13,7 +13,7 @@ exports.createCampaign = async (req, res) => {
 
 exports.getCampaigns = async (req, res) => {
   try {
-    const campaigns = await Campaign.find();
+    const campaigns = await Campaign.find().populate('products');
     res.status(200).send(campaigns);
   } catch (error) {
     res.status(500).send(error);
@@ -22,7 +22,7 @@ exports.getCampaigns = async (req, res) => {
 
 exports.getCampaign = async (req, res) => {
   try {
-    const campaign = await Campaign.findById(req.params.id);
+    const campaign = await Campaign.findById(req.params.id).populate('products');
     if (!campaign) {
       return res.status(404).send('Campaign not found');
     }

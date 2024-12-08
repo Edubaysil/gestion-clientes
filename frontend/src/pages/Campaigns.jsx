@@ -8,6 +8,12 @@ const Campaigns = () => {
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [status, setStatus] = useState('active');
+  const [products, setProducts] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [location, setLocation] = useState('');
+  const [costeOptometra, setCosteOptometra] = useState('');
+  const [viaticos, setViaticos] = useState('');
   const [editingCampaign, setEditingCampaign] = useState(null);
   const navigate = useNavigate();
 
@@ -32,17 +38,49 @@ const Campaigns = () => {
       }
     };
 
+    const fetchProducts = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      try {
+        const response = await axios.get('/api/products', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setProducts(response.data);
+      } catch (error) {
+        console.error(error);
+        navigate('/login');
+      }
+    };
+
     fetchCampaigns();
+    fetchProducts();
   }, [navigate]);
 
   const handleCreateOrUpdateCampaign = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
+      const campaignData = {
+        name,
+        startDate,
+        endDate,
+        status,
+        products: selectedProducts,
+        location,
+        coste_optometra: costeOptometra,
+        viaticos,
+      };
+
       if (editingCampaign) {
         const response = await axios.put(
           `/api/campaigns/${editingCampaign._id}`,
-          { name, startDate, endDate },
+          campaignData,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -54,7 +92,7 @@ const Campaigns = () => {
       } else {
         const response = await axios.post(
           '/api/campaigns',
-          { name, startDate, endDate },
+          campaignData,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -66,6 +104,11 @@ const Campaigns = () => {
       setName('');
       setStartDate('');
       setEndDate('');
+      setStatus('active');
+      setSelectedProducts([]);
+      setLocation('');
+      setCosteOptometra('');
+      setViaticos('');
     } catch (error) {
       console.error(error);
     }
@@ -75,6 +118,11 @@ const Campaigns = () => {
     setName(campaign.name);
     setStartDate(campaign.startDate);
     setEndDate(campaign.endDate);
+    setStatus(campaign.status);
+    setSelectedProducts(campaign.products.map(p => p._id));
+    setLocation(campaign.location);
+    setCosteOptometra(campaign.coste_optometra);
+    setViaticos(campaign.viaticos);
     setEditingCampaign(campaign);
   };
 
@@ -90,6 +138,11 @@ const Campaigns = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleProductChange = (e) => {
+    const value = Array.from(e.target.selectedOptions, option => option.value);
+    setSelectedProducts(value);
   };
 
   return (
@@ -108,7 +161,7 @@ const Campaigns = () => {
         <div>
           <label>Start Date</label>
           <input
-            type="date"
+            type="datetime-local"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             required
@@ -117,9 +170,51 @@ const Campaigns = () => {
         <div>
           <label>End Date</label>
           <input
-            type="date"
+            type="datetime-local"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Status</label>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} required>
+            <option value="active">Active</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <div>
+          <label>Products</label>
+          <select multiple value={selectedProducts} onChange={handleProductChange}>
+            {products.map(product => (
+              <option key={product._id} value={product._id}>{product.name}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label>Location</label>
+          <input
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Coste Optometra</label>
+          <input
+            type="number"
+            value={costeOptometra}
+            onChange={(e) => setCosteOptometra(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label>Viáticos</label>
+          <input
+            type="number"
+            value={viaticos}
+            onChange={(e) => setViaticos(e.target.value)}
             required
           />
         </div>
