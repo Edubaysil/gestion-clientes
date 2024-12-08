@@ -8,6 +8,7 @@ const Campaigns = () => {
   const [name, setName] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [editingCampaign, setEditingCampaign] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,20 +35,34 @@ const Campaigns = () => {
     fetchCampaigns();
   }, [navigate]);
 
-  const handleCreateCampaign = async (e) => {
+  const handleCreateOrUpdateCampaign = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.post(
-        '/api/campaigns',
-        { name, startDate, endDate },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCampaigns([...campaigns, response.data]);
+      if (editingCampaign) {
+        const response = await axios.put(
+          `/api/campaigns/${editingCampaign._id}`,
+          { name, startDate, endDate },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setCampaigns(campaigns.map(c => c._id === editingCampaign._id ? response.data : c));
+        setEditingCampaign(null);
+      } else {
+        const response = await axios.post(
+          '/api/campaigns',
+          { name, startDate, endDate },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setCampaigns([...campaigns, response.data]);
+      }
       setName('');
       setStartDate('');
       setEndDate('');
@@ -56,10 +71,31 @@ const Campaigns = () => {
     }
   };
 
+  const handleEditCampaign = (campaign) => {
+    setName(campaign.name);
+    setStartDate(campaign.startDate);
+    setEndDate(campaign.endDate);
+    setEditingCampaign(campaign);
+  };
+
+  const handleDeleteCampaign = async (id) => {
+    const token = localStorage.getItem('token');
+    try {
+      await axios.delete(`/api/campaigns/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setCampaigns(campaigns.filter(c => c._id !== id));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div>
       <h1>Campaigns</h1>
-      <form onSubmit={handleCreateCampaign}>
+      <form onSubmit={handleCreateOrUpdateCampaign}>
         <div>
           <label>Name</label>
           <input
@@ -87,11 +123,15 @@ const Campaigns = () => {
             required
           />
         </div>
-        <button type="submit">Create Campaign</button>
+        <button type="submit">{editingCampaign ? 'Update' : 'Create'} Campaign</button>
       </form>
       <ul>
         {campaigns.map((campaign) => (
-          <li key={campaign._id}>{campaign.name}</li>
+          <li key={campaign._id}>
+            {campaign.name}
+            <button onClick={() => handleEditCampaign(campaign)}>Edit</button>
+            <button onClick={() => handleDeleteCampaign(campaign._id)}>Delete</button>
+          </li>
         ))}
       </ul>
     </div>
