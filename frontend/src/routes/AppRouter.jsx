@@ -7,6 +7,7 @@ import Campaigns from '../pages/Campaigns';
 import Clients from '../pages/Clients';
 import Products from '../pages/Products';
 import Sales from '../pages/Sales';
+import Lunas from '../pages/Lunas';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 export const AppRouter = () => {
@@ -35,6 +36,12 @@ export const AppRouter = () => {
       <Route path="/sales" element={
           <ProtectedRoute>
             <Sales />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/lunas" element={
+          <ProtectedRoute>
+            <Lunas />
           </ProtectedRoute>
         }
       />

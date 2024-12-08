@@ -16,14 +16,14 @@ const campaignRoutes = require('./routes/campaigns');
 const clientRoutes = require('./routes/clients');
 const productRoutes = require('./routes/products');
 const saleRoutes = require('./routes/sales');
-// Import other routes similarly
+const lunasRoutes = require('./routes/lunas'); // Importar las rutas de Lunas
 
 app.use('/api/users', userRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/clients', clientRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/sales', saleRoutes);
-// Use other routes similarly
+app.use('/api/lunas', lunasRoutes); // Usar las rutas de Lunas
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
