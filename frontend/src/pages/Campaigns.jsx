@@ -14,6 +14,7 @@ const Campaigns = () => {
   const [location, setLocation] = useState('');
   const [costeOptometra, setCosteOptometra] = useState('');
   const [viaticos, setViaticos] = useState('');
+  const [origen, setOrigen] = useState('por convenio'); // Nuevo estado
   const [editingCampaign, setEditingCampaign] = useState(null);
   const navigate = useNavigate();
 
@@ -75,6 +76,7 @@ const Campaigns = () => {
         location,
         coste_optometra: costeOptometra,
         viaticos,
+        origen, // Nuevo campo
       };
 
       if (editingCampaign) {
@@ -109,6 +111,7 @@ const Campaigns = () => {
       setLocation('');
       setCosteOptometra('');
       setViaticos('');
+      setOrigen('por convenio'); // Resetear el campo
     } catch (error) {
       console.error(error);
     }
@@ -123,6 +126,7 @@ const Campaigns = () => {
     setLocation(campaign.location);
     setCosteOptometra(campaign.coste_optometra);
     setViaticos(campaign.viaticos);
+    setOrigen(campaign.origen); // Nuevo campo
     setEditingCampaign(campaign);
   };
 
@@ -179,8 +183,8 @@ const Campaigns = () => {
         <div>
           <label>Status</label>
           <select value={status} onChange={(e) => setStatus(e.target.value)} required>
-            <option value="active">Active</option>
-            <option value="closed">Closed</option>
+            <option value="active">Activo</option>
+            <option value="closed">Cerrado</option>
           </select>
         </div>
         <div>
@@ -217,6 +221,13 @@ const Campaigns = () => {
             onChange={(e) => setViaticos(e.target.value)}
             required
           />
+        </div>
+        <div>
+          <label>Origen</label>
+          <select value={origen} onChange={(e) => setOrigen(e.target.value)} required>
+            <option value="por convenio">Por Convenio</option>
+            <option value="por gestión">Por Gestión</option>
+          </select>
         </div>
         <button type="submit">{editingCampaign ? 'Update' : 'Create'} Campaign</button>
       </form>
