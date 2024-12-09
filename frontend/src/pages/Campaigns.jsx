@@ -11,6 +11,8 @@ const Campaigns = () => {
   const [status, setStatus] = useState('active');
   const [products, setProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [lunas, setLunas] = useState([]); // Nuevo estado
+  const [selectedLunas, setSelectedLunas] = useState([]); // Nuevo estado
   const [location, setLocation] = useState('');
   const [costeOptometra, setCosteOptometra] = useState('');
   const [viaticos, setViaticos] = useState('');
@@ -59,8 +61,29 @@ const Campaigns = () => {
       }
     };
 
+    const fetchLunas = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      try {
+        const response = await axios.get('/api/lunas', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setLunas(response.data);
+      } catch (error) {
+        console.error(error);
+        navigate('/login');
+      }
+    };
+
     fetchCampaigns();
     fetchProducts();
+    fetchLunas();
   }, [navigate]);
 
   const handleCreateOrUpdateCampaign = async (e) => {
@@ -73,6 +96,7 @@ const Campaigns = () => {
         endDate,
         status,
         products: selectedProducts,
+        lunas: selectedLunas, // Nuevo campo
         location,
         coste_optometra: costeOptometra,
         viaticos,
@@ -108,6 +132,7 @@ const Campaigns = () => {
       setEndDate('');
       setStatus('active');
       setSelectedProducts([]);
+      setSelectedLunas([]); // Resetear el campo
       setLocation('');
       setCosteOptometra('');
       setViaticos('');
@@ -123,6 +148,7 @@ const Campaigns = () => {
     setEndDate(campaign.endDate);
     setStatus(campaign.status);
     setSelectedProducts(campaign.products.map(p => p._id));
+    setSelectedLunas(campaign.lunas.map(l => l._id)); // Nuevo campo
     setLocation(campaign.location);
     setCosteOptometra(campaign.coste_optometra);
     setViaticos(campaign.viaticos);
@@ -149,12 +175,17 @@ const Campaigns = () => {
     setSelectedProducts(value);
   };
 
+  const handleLunaChange = (e) => {
+    const value = Array.from(e.target.selectedOptions, option => option.value);
+    setSelectedLunas(value);
+  };
+
   return (
     <div>
-      <h1>Campaigns</h1>
+      <h1>Campaña</h1>
       <form onSubmit={handleCreateOrUpdateCampaign}>
         <div>
-          <label>Name</label>
+          <label>Nombre</label>
           <input
             type="text"
             value={name}
@@ -163,7 +194,7 @@ const Campaigns = () => {
           />
         </div>
         <div>
-          <label>Start Date</label>
+          <label>Fecha Inicio</label>
           <input
             type="datetime-local"
             value={startDate}
@@ -172,7 +203,7 @@ const Campaigns = () => {
           />
         </div>
         <div>
-          <label>End Date</label>
+          <label>Fecha Fin</label>
           <input
             type="datetime-local"
             value={endDate}
@@ -181,14 +212,14 @@ const Campaigns = () => {
           />
         </div>
         <div>
-          <label>Status</label>
+          <label>Estado</label>
           <select value={status} onChange={(e) => setStatus(e.target.value)} required>
             <option value="active">Activo</option>
             <option value="closed">Cerrado</option>
           </select>
         </div>
         <div>
-          <label>Products</label>
+          <label>Monturas</label>
           <select multiple value={selectedProducts} onChange={handleProductChange}>
             {products.map(product => (
               <option key={product._id} value={product._id}>{product.name}</option>
@@ -196,7 +227,15 @@ const Campaigns = () => {
           </select>
         </div>
         <div>
-          <label>Location</label>
+          <label>Lunas</label>
+          <select multiple value={selectedLunas} onChange={handleLunaChange}>
+            {lunas.map(luna => (
+              <option key={luna._id} value={luna._id}>{luna.descripcion}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label>Ubicacion</label>
           <input
             type="text"
             value={location}

@@ -15,8 +15,8 @@ import ProtectedRoute from '../components/ProtectedRoute';
 export const AppRouter = () => {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
       <Route element={<NoNavbarLayout />}>
+        <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
       </Route>
       <Route element={<MainLayout />}>
