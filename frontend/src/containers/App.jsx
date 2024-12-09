@@ -1,14 +1,13 @@
 // src/containers/App.jsx
 import React from 'react';
-import Header from '../components/Header';
-import Navbar from '../components/Navbar';
 import { AppRouter } from '../routes/AppRouter';
+import { useLocation } from 'react-router-dom';
 
 const App = () => {
+  const location = useLocation();
+
   return (
     <div>
-      <Header />
-      <Navbar />
       <AppRouter />
     </div>
   );
