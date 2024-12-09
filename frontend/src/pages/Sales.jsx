@@ -274,6 +274,15 @@ const Sales = () => {
       <h1>Sales</h1>
       <form onSubmit={handleCreateOrUpdateSale}>
         <div>
+          <label>Campaign</label>
+          <select value={campaign} onChange={(e) => setCampaign(e.target.value)} required>
+            <option value="">Select Campaign</option>
+            {campaigns.map(campaign => (
+              <option key={campaign._id} value={campaign._id}>{campaign.name}</option>
+            ))}
+          </select>
+        </div>
+        <div>
           <label>Client</label>
           <select value={client} onChange={(e) => setClient(e.target.value)} required>
             <option value="">Select Client</option>
@@ -305,15 +314,6 @@ const Sales = () => {
             <option value="reserved">Reserved</option>
             <option value="to deliver">To Deliver</option>
             <option value="delivered">Delivered</option>
-          </select>
-        </div>
-        <div>
-          <label>Campaign</label>
-          <select value={campaign} onChange={(e) => setCampaign(e.target.value)} required>
-            <option value="">Select Campaign</option>
-            {campaigns.map(campaign => (
-              <option key={campaign._id} value={campaign._id}>{campaign.name}</option>
-            ))}
           </select>
         </div>
         <div>
