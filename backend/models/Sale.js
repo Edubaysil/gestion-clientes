@@ -9,6 +9,7 @@ const SaleSchema = new mongoose.Schema({
   campaign: { type: mongoose.Schema.Types.ObjectId, ref: 'Campaign', required: true },
   luna: { type: mongoose.Schema.Types.ObjectId, ref: 'Lunas', required: true }, // Nuevo campo
   tratamientos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tratamiento' }], // Nuevo campo
+  total: { type: Number, required: true }, // Nuevo campo
 });
 
 module.exports = mongoose.model('Sale', SaleSchema);

@@ -148,7 +148,7 @@ const Sales = () => {
         campaign,
         luna,
         tratamientos: selectedTratamientos,
-        totalPrice,
+        total: totalPrice,
       };
 
       if (editingSale) {
@@ -198,7 +198,7 @@ const Sales = () => {
     setCampaign(sale.campaign._id);
     setLuna(sale.luna._id);
     setSelectedTratamientos(sale.tratamientos.map(t => t._id));
-    setTotalPrice(sale.totalPrice);
+    setTotalPrice(sale.total);
     setEditingSale(sale);
   };
 
@@ -287,14 +287,14 @@ const Sales = () => {
           </select>
         </div>
         <div>
-          <label>Total Price: ${totalPrice}</label>
+          <label>Total: S/{totalPrice}</label>
         </div>
         <button type="submit">{editingSale ? 'Update' : 'Create'} Sale</button>
       </form>
       <ul>
         {sales.map((sale) => (
           <li key={sale._id}>
-            {sale.client.name} - {sale.product.name} - {sale.luna.descripcion} - {sale.status} - ${sale.totalPrice}
+            {sale.client.name} - {sale.product.name} - {sale.luna.descripcion} - {sale.status} - ${sale.total}
             <button onClick={() => handleEditSale(sale)}>Edit</button>
             <button onClick={() => handleDeleteSale(sale._id)}>Delete</button>
           </li>
