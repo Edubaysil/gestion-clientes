@@ -9,14 +9,10 @@ const Campaigns = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [status, setStatus] = useState('active');
-  const [products, setProducts] = useState([]);
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const [lunas, setLunas] = useState([]); // Nuevo estado
-  const [selectedLunas, setSelectedLunas] = useState([]); // Nuevo estado
   const [location, setLocation] = useState('');
   const [costeOptometra, setCosteOptometra] = useState('');
   const [viaticos, setViaticos] = useState('');
-  const [origen, setOrigen] = useState('por convenio'); // Nuevo estado
+  const [origen, setOrigen] = useState('por convenio');
   const [editingCampaign, setEditingCampaign] = useState(null);
   const navigate = useNavigate();
 
@@ -41,49 +37,7 @@ const Campaigns = () => {
       }
     };
 
-    const fetchProducts = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      try {
-        const response = await axios.get('/api/products', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setProducts(response.data);
-      } catch (error) {
-        console.error(error);
-        navigate('/login');
-      }
-    };
-
-    const fetchLunas = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      try {
-        const response = await axios.get('/api/lunas', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setLunas(response.data);
-      } catch (error) {
-        console.error(error);
-        navigate('/login');
-      }
-    };
-
     fetchCampaigns();
-    fetchProducts();
-    fetchLunas();
   }, [navigate]);
 
   const handleCreateOrUpdateCampaign = async (e) => {
@@ -95,12 +49,10 @@ const Campaigns = () => {
         startDate,
         endDate,
         status,
-        products: selectedProducts,
-        lunas: selectedLunas, // Nuevo campo
         location,
         coste_optometra: costeOptometra,
         viaticos,
-        origen, // Nuevo campo
+        origen,
       };
 
       if (editingCampaign) {
@@ -131,12 +83,10 @@ const Campaigns = () => {
       setStartDate('');
       setEndDate('');
       setStatus('active');
-      setSelectedProducts([]);
-      setSelectedLunas([]); // Resetear el campo
       setLocation('');
       setCosteOptometra('');
       setViaticos('');
-      setOrigen('por convenio'); // Resetear el campo
+      setOrigen('por convenio');
     } catch (error) {
       console.error(error);
     }
@@ -147,12 +97,10 @@ const Campaigns = () => {
     setStartDate(campaign.startDate);
     setEndDate(campaign.endDate);
     setStatus(campaign.status);
-    setSelectedProducts(campaign.products.map(p => p._id));
-    setSelectedLunas(campaign.lunas.map(l => l._id)); // Nuevo campo
     setLocation(campaign.location);
     setCosteOptometra(campaign.coste_optometra);
     setViaticos(campaign.viaticos);
-    setOrigen(campaign.origen); // Nuevo campo
+    setOrigen(campaign.origen);
     setEditingCampaign(campaign);
   };
 
@@ -168,16 +116,6 @@ const Campaigns = () => {
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const handleProductChange = (e) => {
-    const value = Array.from(e.target.selectedOptions, option => option.value);
-    setSelectedProducts(value);
-  };
-
-  const handleLunaChange = (e) => {
-    const value = Array.from(e.target.selectedOptions, option => option.value);
-    setSelectedLunas(value);
   };
 
   return (
@@ -219,23 +157,7 @@ const Campaigns = () => {
           </select>
         </div>
         <div>
-          <label>Monturas</label>
-          <select multiple value={selectedProducts} onChange={handleProductChange}>
-            {products.map(product => (
-              <option key={product._id} value={product._id}>{product.name}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>Lunas</label>
-          <select multiple value={selectedLunas} onChange={handleLunaChange}>
-            {lunas.map(luna => (
-              <option key={luna._id} value={luna._id}>{luna.descripcion}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>Ubicacion</label>
+          <label>Ubicación</label>
           <input
             type="text"
             value={location}

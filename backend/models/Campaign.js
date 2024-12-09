@@ -6,12 +6,10 @@ const CampaignSchema = new mongoose.Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   status: { type: String, enum: ['active', 'closed'], default: 'active' },
-  products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
-  lunas: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lunas' }], // Nuevo campo
   location: { type: String, required: true },
   coste_optometra: { type: Number, required: true },
   viaticos: { type: Number, required: true },
-  origen: { type: String, enum: ['por convenio', 'por gestión'], required: true }, // Nuevo campo
+  origen: { type: String, enum: ['por convenio', 'por gestión'], required: true },
 });
 
 module.exports = mongoose.model('Campaign', CampaignSchema);
