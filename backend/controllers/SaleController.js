@@ -1,5 +1,7 @@
 // backend/controllers/SaleController.js
 const Sale = require('../models/Sale');
+const Client = require('../models/Client');
+
 
 exports.createSale = async (req, res) => {
   try {
@@ -27,6 +29,15 @@ exports.getSale = async (req, res) => {
       return res.status(404).send('Sale not found');
     }
     res.status(200).send(sale);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+exports.getClientsByCampaign = async (req, res) => {
+  try {
+    const clients = await Client.find({ campaign: req.params.campaignId });
+    res.status(200).send(clients);
   } catch (error) {
     res.status(500).send(error);
   }

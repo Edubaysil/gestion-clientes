@@ -7,6 +7,7 @@ const { protect } = require('../middleware/authMiddleware');
 router.post('/', protect, SaleController.createSale);
 router.get('/', protect, SaleController.getSales);
 router.get('/:id', protect, SaleController.getSale);
+router.get('/clients/:campaignId', protect, SaleController.getClientsByCampaign);
 router.put('/:id', protect, SaleController.updateSale);
 router.delete('/:id', protect, SaleController.deleteSale);
 

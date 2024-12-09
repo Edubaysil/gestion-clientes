@@ -17,71 +17,12 @@ const Sales = () => {
   const [campaign, setCampaign] = useState('');
   const [luna, setLuna] = useState('');
   const [selectedTratamientos, setSelectedTratamientos] = useState([]);
-  const [editingSale, setEditingSale] = useState(null);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [editingSale, setEditingSale] = useState(null);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchSales = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      try {
-        const response = await axios.get('/api/sales', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setSales(response.data);
-      } catch (error) {
-        console.error(error);
-        navigate('/login');
-      }
-    };
-
-    const fetchClients = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      try {
-        const response = await axios.get('/api/clients', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setClients(response.data);
-      } catch (error) {
-        console.error(error);
-        navigate('/login');
-      }
-    };
-
-    const fetchProducts = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      try {
-        const response = await axios.get('/api/products', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setProducts(response.data);
-      } catch (error) {
-        console.error(error);
-        navigate('/login');
-      }
-    };
-
     const fetchCampaigns = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -102,59 +43,57 @@ const Sales = () => {
       }
     };
 
-    const fetchLunas = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      try {
-        const response = await axios.get('/api/lunas', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setLunas(response.data);
-      } catch (error) {
-        console.error(error);
-        navigate('/login');
-      }
-    };
-
-    const fetchTratamientos = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      try {
-        const response = await axios.get('/api/tratamientos', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setTratamientos(response.data);
-      } catch (error) {
-        console.error(error);
-        navigate('/login');
-      }
-    };
-
-    fetchSales();
-    fetchClients();
-    fetchProducts();
     fetchCampaigns();
-    fetchLunas();
-    fetchTratamientos();
+  }, [navigate]);
+
+  const fetchClientsByCampaign = async (campaignId) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const response = await axios.get(`/api/sales/clients/${campaignId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setClients(response.data);
+    } catch (error) {
+      console.error(error);
+      navigate('/login');
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      try {
+        const [productsResponse, lunasResponse, tratamientosResponse] = await Promise.all([
+          axios.get('/api/products', { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get('/api/lunas', { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get('/api/tratamientos', { headers: { Authorization: `Bearer ${token}` } }),
+        ]);
+
+        setProducts(productsResponse.data);
+        setLunas(lunasResponse.data);
+        setTratamientos(tratamientosResponse.data);
+      } catch (error) {
+        console.error(error);
+        navigate('/login');
+      }
+    };
+
+    fetchData();
   }, [navigate]);
 
   useEffect(() => {
-    calculateTotalPrice();
-  }, [product, luna, selectedTratamientos, quantity]);
-
-  const calculateTotalPrice = () => {
     let total = 0;
 
     if (product) {
@@ -179,13 +118,24 @@ const Sales = () => {
     });
 
     setTotalPrice(total);
+  }, [product, quantity, luna, selectedTratamientos, products, lunas, tratamientos]);
+
+  const handleCampaignChange = (e) => {
+    const selectedCampaign = e.target.value;
+    setCampaign(selectedCampaign);
+    fetchClientsByCampaign(selectedCampaign);
   };
 
   const handleCreateOrUpdateSale = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
     if (!product && !luna) {
-      alert('Debe seleccionar al menos un producto o una luna.');
+      setError('Debe seleccionar al menos un producto o una luna.');
+      return;
+    }
+
+    if (!client || !campaign) {
+      setError('Debe seleccionar un cliente y una campaña.');
       return;
     }
 
@@ -233,7 +183,9 @@ const Sales = () => {
       setLuna('');
       setSelectedTratamientos([]);
       setTotalPrice(0);
+      setError('');
     } catch (error) {
+      setError('Error al crear o actualizar la venta.');
       console.error(error);
     }
   };
@@ -272,10 +224,11 @@ const Sales = () => {
   return (
     <div>
       <h1>Sales</h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleCreateOrUpdateSale}>
         <div>
           <label>Campaign</label>
-          <select value={campaign} onChange={(e) => setCampaign(e.target.value)} required>
+          <select value={campaign} onChange={handleCampaignChange} required>
             <option value="">Select Campaign</option>
             {campaigns.map(campaign => (
               <option key={campaign._id} value={campaign._id}>{campaign.name}</option>
