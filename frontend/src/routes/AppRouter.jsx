@@ -8,6 +8,7 @@ import Clients from '../pages/Clients';
 import Products from '../pages/Products';
 import Sales from '../pages/Sales';
 import Lunas from '../pages/Lunas';
+import Tratamientos from '../pages/Tratamientos';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 export const AppRouter = () => {
@@ -15,9 +16,9 @@ export const AppRouter = () => {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/home" element={
-        <ProtectedRoute>
-          <Home />
-        </ProtectedRoute>
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
         } 
       />
       <Route path="/campaigns" element={
@@ -47,6 +48,12 @@ export const AppRouter = () => {
       <Route path="/lunas" element={
           <ProtectedRoute>
             <Lunas />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/tratamientos" element={
+          <ProtectedRoute>
+            <Tratamientos />
           </ProtectedRoute>
         }
       />

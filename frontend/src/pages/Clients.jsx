@@ -9,6 +9,7 @@ const Clients = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [age, setAge] = useState('');
+  const [direccion, setDireccion] = useState(''); // Nuevo estado
   const [campaigns, setCampaigns] = useState([]);
   const [campaign, setCampaign] = useState('');
   const [farMeasurements, setFarMeasurements] = useState({ ojo_derecho: {}, ojo_izquierdo: {} });
@@ -77,6 +78,7 @@ const Clients = () => {
         email,
         phone,
         edad: age,
+        direccion, // Nuevo campo
         campaign,
         medida_lejos: farMeasurements,
         medida_cerca: nearMeasurements,
@@ -115,6 +117,7 @@ const Clients = () => {
       setEmail('');
       setPhone('');
       setAge('');
+      setDireccion(''); // Resetear el campo
       setCampaign('');
       setFarMeasurements({ ojo_derecho: {}, ojo_izquierdo: {} });
       setNearMeasurements({ ojo_derecho: {}, ojo_izquierdo: {} });
@@ -135,6 +138,7 @@ const Clients = () => {
     setEmail(client.email);
     setPhone(client.phone);
     setAge(client.edad);
+    setDireccion(client.direccion); // Nuevo campo
     setCampaign(client.campaign._id);
     setFarMeasurements(client.medida_lejos);
     setNearMeasurements(client.medida_cerca);
@@ -194,7 +198,7 @@ const Clients = () => {
       <h1>Clients</h1>
       <form onSubmit={handleCreateOrUpdateClient}>
         <div>
-          <label>Name</label>
+          <label>Nombre</label>
           <input
             type="text"
             value={name}
@@ -203,7 +207,7 @@ const Clients = () => {
           />
         </div>
         <div>
-          <label>Email</label>
+          <label>Correo</label>
           <input
             type="email"
             value={email}
@@ -211,7 +215,7 @@ const Clients = () => {
           />
         </div>
         <div>
-          <label>Phone</label>
+          <label>Telefono</label>
           <input
             type="text"
             value={phone}
@@ -220,7 +224,7 @@ const Clients = () => {
           />
         </div>
         <div>
-          <label>Age</label>
+          <label>Edad</label>
           <input
             type="number"
             value={age}
@@ -229,7 +233,15 @@ const Clients = () => {
           />
         </div>
         <div>
-          <label>Campaign</label>
+          <label>Dirección</label>
+          <input
+            type="text"
+            value={direccion}
+            onChange={(e) => setDireccion(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Campaña</label>
           <select value={campaign} onChange={(e) => setCampaign(e.target.value)} required>
             <option value="">Select Campaign</option>
             {campaigns.map(campaign => (
@@ -238,9 +250,9 @@ const Clients = () => {
           </select>
         </div>
         <div>
-          <h3>Far Measurements</h3>
+          <h3>Medida de Lejos</h3>
           <div>
-            <h4>Right Eye</h4>
+            <h4>Ojo Derecho</h4>
             <label>Esfera</label>
             <input
               type="number"
@@ -273,7 +285,7 @@ const Clients = () => {
             />
           </div>
           <div>
-            <h4>Left Eye</h4>
+            <h4>Ojo Izquierdo</h4>
             <label>Esfera</label>
             <input
               type="number"
@@ -307,9 +319,9 @@ const Clients = () => {
           </div>
         </div>
         <div>
-          <h3>Near Measurements</h3>
+          <h3>Medida de Cerca</h3>
           <div>
-            <h4>Right Eye</h4>
+            <h4>Ojo Derecho</h4>
             <label>Esfera</label>
             <input
               type="number"
@@ -342,7 +354,7 @@ const Clients = () => {
             />
           </div>
           <div>
-            <h4>Left Eye</h4>
+            <h4>Ojo Izquierdo</h4>
             <label>Esfera</label>
             <input
               type="number"
@@ -376,7 +388,7 @@ const Clients = () => {
           </div>
         </div>
         <div>
-          <h3>Conditions</h3>
+          <h3>Condiciones</h3>
           <label>
             <input
               type="checkbox"
