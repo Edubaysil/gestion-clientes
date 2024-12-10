@@ -33,7 +33,7 @@ const Reporte = () => {
     fetchCampaigns();
   }, [navigate]);
 
-  const fetchReport = async (id) => {
+  const fetchCampaignData = async (id) => {
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
@@ -41,14 +41,14 @@ const Reporte = () => {
     }
 
     try {
-      const response = await axios.get(`/api/reportes/${id}`, {
+      const response = await axios.get(`/api/reportes/campaign/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setReport(response.data);
     } catch (error) {
-      console.error('Error fetching report:', error);
+      console.error('Error fetching campaign data:', error);
     }
   };
 
@@ -60,12 +60,12 @@ const Reporte = () => {
     }
 
     try {
-      const response = await axios.post('/api/reportes/generate', { campaignId }, {
+      await axios.post('/api/reportes/generate', { campaignId }, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setReport(response.data);
+      alert('Reporte generado y guardado en la base de datos.');
     } catch (error) {
       console.error('Error generating report:', error);
     }
@@ -91,6 +91,14 @@ const Reporte = () => {
       }
     } catch (error) {
       console.error('Error searching campaign:', error);
+    }
+  };
+
+  const handleViewReport = () => {
+    if (campaignId) {
+      fetchCampaignData(campaignId);
+    } else {
+      alert('Seleccione una campaña primero');
     }
   };
 
@@ -120,6 +128,7 @@ const Reporte = () => {
           ))}
         </select>
       </div>
+      <button onClick={handleViewReport}>Ver Reporte</button>
       <button onClick={generateReport}>Generar Reporte</button>
       {report && (
         <div>
