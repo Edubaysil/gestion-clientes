@@ -7,7 +7,8 @@ const SaleSchema = new mongoose.Schema({
   quantity: { type: Number, required: true },
   status: { type: String, enum: ['reserved', 'to deliver', 'delivered'], default: 'reserved' },
   campaign: { type: mongoose.Schema.Types.ObjectId, ref: 'Campaign', required: true },
-  luna: { type: mongoose.Schema.Types.ObjectId, ref: 'Lunas', required: true }, // Nuevo campo
+  luna_izquierda: { type: mongoose.Schema.Types.ObjectId, ref: 'Lunas', required: true }, // Nuevo campo
+  luna_derecha: { type: mongoose.Schema.Types.ObjectId, ref: 'Lunas', required: true }, // Nuevo campo
   tratamientos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tratamiento' }], // Nuevo campo
   total: { type: Number, required: true }, // Nuevo campo
 });

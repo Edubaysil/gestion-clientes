@@ -7,7 +7,7 @@ const Tratamiento = require('../models/Tratamiento');
 
 exports.createSale = async (req, res) => {
   try {
-    const { product, quantity, luna, tratamientos } = req.body;
+    const { product, quantity, luna_izquierda, luna_derecha, tratamientos } = req.body;
 
     let total = 0;
 
@@ -18,10 +18,17 @@ exports.createSale = async (req, res) => {
       }
     }
 
-    if (luna) {
-      const selectedLuna = await Luna.findById(luna);
-      if (selectedLuna) {
-        total += selectedLuna.precio;
+    if (luna_izquierda) {
+      const selectedLunaIzquierda = await Luna.findById(luna_izquierda);
+      if (selectedLunaIzquierda) {
+        total += selectedLunaIzquierda.precio;
+      }
+    }
+
+    if (luna_derecha) {
+      const selectedLunaDerecha = await Luna.findById(luna_derecha);
+      if (selectedLunaDerecha) {
+        total += selectedLunaDerecha.precio;
       }
     }
 
@@ -44,7 +51,7 @@ exports.createSale = async (req, res) => {
 
 exports.getSales = async (req, res) => {
   try {
-    const sales = await Sale.find().populate('client product campaign luna tratamientos');
+    const sales = await Sale.find().populate('client product campaign luna_izquierda luna_derecha tratamientos');
     res.status(200).send(sales);
   } catch (error) {
     res.status(500).send(error);
@@ -53,7 +60,7 @@ exports.getSales = async (req, res) => {
 
 exports.getSale = async (req, res) => {
   try {
-    const sale = await Sale.findById(req.params.id).populate('client product campaign luna tratamientos');
+    const sale = await Sale.findById(req.params.id).populate('client product campaign luna_izquierda luna_derecha tratamientos');
     if (!sale) {
       return res.status(404).send('Sale not found');
     }

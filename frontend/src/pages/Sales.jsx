@@ -15,7 +15,8 @@ const Sales = () => {
   const [quantity, setQuantity] = useState('');
   const [status, setStatus] = useState('reserved');
   const [campaign, setCampaign] = useState('');
-  const [luna, setLuna] = useState('');
+  const [lunaIzquierda, setLunaIzquierda] = useState('');
+  const [lunaDerecha, setLunaDerecha] = useState('');
   const [selectedTratamientos, setSelectedTratamientos] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [editingSale, setEditingSale] = useState(null);
@@ -103,10 +104,17 @@ const Sales = () => {
       }
     }
 
-    if (luna) {
-      const selectedLuna = lunas.find(l => l._id === luna);
-      if (selectedLuna) {
-        total += selectedLuna.precio;
+    if (lunaIzquierda) {
+      const selectedLunaIzquierda = lunas.find(l => l._id === lunaIzquierda);
+      if (selectedLunaIzquierda) {
+        total += selectedLunaIzquierda.precio;
+      }
+    }
+
+    if (lunaDerecha) {
+      const selectedLunaDerecha = lunas.find(l => l._id === lunaDerecha);
+      if (selectedLunaDerecha) {
+        total += selectedLunaDerecha.precio;
       }
     }
 
@@ -118,7 +126,7 @@ const Sales = () => {
     });
 
     setTotalPrice(total);
-  }, [product, quantity, luna, selectedTratamientos, products, lunas, tratamientos]);
+  }, [product, quantity, lunaIzquierda, lunaDerecha, selectedTratamientos, products, lunas, tratamientos]);
 
   const handleCampaignChange = (e) => {
     const selectedCampaign = e.target.value;
@@ -129,7 +137,7 @@ const Sales = () => {
   const handleCreateOrUpdateSale = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-    if (!product && !luna) {
+    if (!product && !lunaIzquierda && !lunaDerecha) {
       setError('Debe seleccionar al menos un producto o una luna.');
       return;
     }
@@ -146,7 +154,8 @@ const Sales = () => {
         quantity,
         status,
         campaign,
-        luna,
+        luna_izquierda: lunaIzquierda,
+        luna_derecha: lunaDerecha,
         tratamientos: selectedTratamientos,
         total: totalPrice,
       };
@@ -180,7 +189,8 @@ const Sales = () => {
       setQuantity('');
       setStatus('reserved');
       setCampaign('');
-      setLuna('');
+      setLunaIzquierda('');
+      setLunaDerecha('');
       setSelectedTratamientos([]);
       setTotalPrice(0);
       setError('');
@@ -196,7 +206,8 @@ const Sales = () => {
     setQuantity(sale.quantity);
     setStatus(sale.status);
     setCampaign(sale.campaign._id);
-    setLuna(sale.luna._id);
+    setLunaIzquierda(sale.luna_izquierda._id);
+    setLunaDerecha(sale.luna_derecha._id);
     setSelectedTratamientos(sale.tratamientos.map(t => t._id));
     setTotalPrice(sale.total);
     setEditingSale(sale);
@@ -270,9 +281,18 @@ const Sales = () => {
           </select>
         </div>
         <div>
-          <label>Luna</label>
-          <select value={luna} onChange={(e) => setLuna(e.target.value)}>
-            <option value="">Select Luna</option>
+          <label>Luna Izquierda</label>
+          <select value={lunaIzquierda} onChange={(e) => setLunaIzquierda(e.target.value)}>
+            <option value="">Select Luna Izquierda</option>
+            {lunas.map(luna => (
+              <option key={luna._id} value={luna._id}>{luna.descripcion}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label>Luna Derecha</label>
+          <select value={lunaDerecha} onChange={(e) => setLunaDerecha(e.target.value)}>
+            <option value="">Select Luna Derecha</option>
             {lunas.map(luna => (
               <option key={luna._id} value={luna._id}>{luna.descripcion}</option>
             ))}
@@ -294,7 +314,7 @@ const Sales = () => {
       <ul>
         {sales.map((sale) => (
           <li key={sale._id}>
-            {sale.client.name} - {sale.product.name} - {sale.luna.descripcion} - {sale.status} - ${sale.total}
+            {sale.client.name} - {sale.product.name} - {sale.luna_izquierda.descripcion} - {sale.luna_derecha.descripcion} - {sale.status} - ${sale.total}
             <button onClick={() => handleEditSale(sale)}>Edit</button>
             <button onClick={() => handleDeleteSale(sale._id)}>Delete</button>
           </li>
