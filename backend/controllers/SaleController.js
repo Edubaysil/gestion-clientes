@@ -13,29 +13,45 @@ exports.createSale = async (req, res) => {
 
     if (product) {
       const selectedProduct = await Product.findById(product);
-      if (selectedProduct) {
+      if (selectedProduct && selectedProduct.stock > 0) {
         total += selectedProduct.price;
+        selectedProduct.stock -= 1;
+        await selectedProduct.save();
+      } else {
+        return res.status(400).send({ message: 'Product out of stock' });
       }
     }
 
     if (producto2) {
       const selectedProduct2 = await Product.findById(producto2);
-      if (selectedProduct2) {
+      if (selectedProduct2 && selectedProduct2.stock > 0) {
         total += selectedProduct2.price;
+        selectedProduct2.stock -= 1;
+        await selectedProduct2.save();
+      } else {
+        return res.status(400).send({ message: 'Product 2 out of stock' });
       }
     }
 
     if (luna_izquierda) {
       const selectedLunaIzquierda = await Luna.findById(luna_izquierda);
-      if (selectedLunaIzquierda) {
+      if (selectedLunaIzquierda && selectedLunaIzquierda.stock > 0) {
         total += selectedLunaIzquierda.precio;
+        selectedLunaIzquierda.stock -= 1;
+        await selectedLunaIzquierda.save();
+      } else {
+        return res.status(400).send({ message: 'Luna izquierda out of stock' });
       }
     }
 
     if (luna_derecha) {
       const selectedLunaDerecha = await Luna.findById(luna_derecha);
-      if (selectedLunaDerecha) {
+      if (selectedLunaDerecha && selectedLunaDerecha.stock > 0) {
         total += selectedLunaDerecha.precio;
+        selectedLunaDerecha.stock -= 1;
+        await selectedLunaDerecha.save();
+      } else {
+        return res.status(400).send({ message: 'Luna derecha out of stock' });
       }
     }
 

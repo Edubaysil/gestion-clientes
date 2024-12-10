@@ -158,16 +158,14 @@ const Sales = () => {
       const saleData = {
         client,
         product,
-        producto2: producto2 || undefined, // Campo opcional
+        producto2: producto2 || undefined,
         status,
         campaign,
         luna_izquierda: lunaIzquierda,
         luna_derecha: lunaDerecha,
-        tratamientos: selectedTratamientos.length > 0 ? selectedTratamientos : undefined, // Campo opcional
+        tratamientos: selectedTratamientos.length > 0 ? selectedTratamientos : undefined,
         total: totalPrice,
       };
-
-      console.log('Sending sale data:', saleData); // Log para verificar los datos enviados
 
       if (editingSale) {
         const response = await axios.put(
@@ -266,10 +264,12 @@ const Sales = () => {
         </div>
         <div>
           <label>Montura</label>
-          <select value={product} onChange={(e) => setProduct(e.target.value)}>
+          <select value={product} onChange={(e) => setProduct(e.target.value)} required>
             <option value="">Select Product</option>
             {products.map(product => (
-              <option key={product._id} value={product._id}>{product.name}</option>
+              <option key={product._id} value={product._id} disabled={product.stock === 0}>
+                {product.name} (Stock: {product.stock})
+              </option>
             ))}
           </select>
         </div>
@@ -278,7 +278,9 @@ const Sales = () => {
           <select value={producto2} onChange={(e) => setProducto2(e.target.value)}>
             <option value="">Select Product 2</option>
             {products.map(product => (
-              <option key={product._id} value={product._id}>{product.name}</option>
+              <option key={product._id} value={product._id} disabled={product.stock === 0}>
+                {product.name} (Stock: {product.stock})
+              </option>
             ))}
           </select>
         </div>
@@ -292,19 +294,23 @@ const Sales = () => {
         </div>
         <div>
           <label>Luna Izquierda</label>
-          <select value={lunaIzquierda} onChange={(e) => setLunaIzquierda(e.target.value)}>
+          <select value={lunaIzquierda} onChange={(e) => setLunaIzquierda(e.target.value)} required>
             <option value="">Select Luna Izquierda</option>
             {lunas.map(luna => (
-              <option key={luna._id} value={luna._id}>{luna.descripcion}</option>
+              <option key={luna._id} value={luna._id} disabled={luna.stock === 0}>
+                {luna.descripcion} (Stock: {luna.stock})
+              </option>
             ))}
           </select>
         </div>
         <div>
           <label>Luna Derecha</label>
-          <select value={lunaDerecha} onChange={(e) => setLunaDerecha(e.target.value)}>
+          <select value={lunaDerecha} onChange={(e) => setLunaDerecha(e.target.value)} required>
             <option value="">Select Luna Derecha</option>
             {lunas.map(luna => (
-              <option key={luna._id} value={luna._id}>{luna.descripcion}</option>
+              <option key={luna._id} value={luna._id} disabled={luna.stock === 0}>
+                {luna.descripcion} (Stock: {luna.stock})
+              </option>
             ))}
           </select>
         </div>
