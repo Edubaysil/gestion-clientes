@@ -24,7 +24,7 @@ const Sales = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCampaigns = async () => {
+    const fetchData = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
         navigate('/login');
@@ -32,19 +32,24 @@ const Sales = () => {
       }
 
       try {
-        const response = await axios.get('/api/campaigns', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setCampaigns(response.data);
+        const [productsResponse, lunasResponse, tratamientosResponse, campaignsResponse] = await Promise.all([
+          axios.get('/api/products', { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get('/api/lunas', { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get('/api/tratamientos', { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get('/api/campaigns/active', { headers: { Authorization: `Bearer ${token}` } }), // Obtener solo campañas activas
+        ]);
+
+        setProducts(productsResponse.data);
+        setLunas(lunasResponse.data);
+        setTratamientos(tratamientosResponse.data);
+        setCampaigns(campaignsResponse.data);
       } catch (error) {
         console.error(error);
         navigate('/login');
       }
     };
 
-    fetchCampaigns();
+    fetchData();
   }, [navigate]);
 
   const fetchClientsByCampaign = async (campaignId) => {
@@ -66,33 +71,6 @@ const Sales = () => {
       navigate('/login');
     }
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-
-      try {
-        const [productsResponse, lunasResponse, tratamientosResponse] = await Promise.all([
-          axios.get('/api/products', { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get('/api/lunas', { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get('/api/tratamientos', { headers: { Authorization: `Bearer ${token}` } }),
-        ]);
-
-        setProducts(productsResponse.data);
-        setLunas(lunasResponse.data);
-        setTratamientos(tratamientosResponse.data);
-      } catch (error) {
-        console.error(error);
-        navigate('/login');
-      }
-    };
-
-    fetchData();
-  }, [navigate]);
 
   useEffect(() => {
     let total = 0;

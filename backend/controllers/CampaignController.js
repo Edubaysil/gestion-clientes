@@ -55,3 +55,12 @@ exports.deleteCampaign = async (req, res) => {
     res.status(500).send({ message: 'Error deleting campaign', error });
   }
 };
+
+exports.getActiveCampaigns = async (req, res) => {
+  try {
+    const campaigns = await Campaign.find({ status: 'active' });
+    res.status(200).send(campaigns);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
