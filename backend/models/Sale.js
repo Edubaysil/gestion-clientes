@@ -4,13 +4,13 @@ const mongoose = require('mongoose');
 const SaleSchema = new mongoose.Schema({
   client: { type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true },
   product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-  quantity: { type: Number, required: true },
+  producto2: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: false }, // Campo opcional
   status: { type: String, enum: ['reserved', 'to deliver', 'delivered'], default: 'reserved' },
   campaign: { type: mongoose.Schema.Types.ObjectId, ref: 'Campaign', required: true },
-  luna_izquierda: { type: mongoose.Schema.Types.ObjectId, ref: 'Lunas', required: true }, // Nuevo campo
-  luna_derecha: { type: mongoose.Schema.Types.ObjectId, ref: 'Lunas', required: true }, // Nuevo campo
-  tratamientos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tratamiento' }], // Nuevo campo
-  total: { type: Number, required: true }, // Nuevo campo
+  luna_izquierda: { type: mongoose.Schema.Types.ObjectId, ref: 'Lunas', required: true },
+  luna_derecha: { type: mongoose.Schema.Types.ObjectId, ref: 'Lunas', required: true },
+  tratamientos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tratamiento', required: false }], // Campo opcional
+  total: { type: Number, required: true },
 });
 
 module.exports = mongoose.model('Sale', SaleSchema);

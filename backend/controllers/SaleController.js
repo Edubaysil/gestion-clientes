@@ -7,14 +7,21 @@ const Tratamiento = require('../models/Tratamiento');
 
 exports.createSale = async (req, res) => {
   try {
-    const { product, quantity, luna_izquierda, luna_derecha, tratamientos } = req.body;
+    const { product, producto2, luna_izquierda, luna_derecha, tratamientos } = req.body;
 
     let total = 0;
 
     if (product) {
       const selectedProduct = await Product.findById(product);
       if (selectedProduct) {
-        total += selectedProduct.price * quantity;
+        total += selectedProduct.price;
+      }
+    }
+
+    if (producto2) {
+      const selectedProduct2 = await Product.findById(producto2);
+      if (selectedProduct2) {
+        total += selectedProduct2.price;
       }
     }
 
@@ -45,13 +52,14 @@ exports.createSale = async (req, res) => {
     await sale.save();
     res.status(201).send(sale);
   } catch (error) {
-    res.status(400).send(error);
+    console.error('Error creating sale:', error);
+    res.status(400).send({ message: 'Error creating sale', error });
   }
 };
 
 exports.getSales = async (req, res) => {
   try {
-    const sales = await Sale.find().populate('client product campaign luna_izquierda luna_derecha tratamientos');
+    const sales = await Sale.find().populate('client product producto2 campaign luna_izquierda luna_derecha tratamientos');
     res.status(200).send(sales);
   } catch (error) {
     res.status(500).send(error);
@@ -60,7 +68,7 @@ exports.getSales = async (req, res) => {
 
 exports.getSale = async (req, res) => {
   try {
-    const sale = await Sale.findById(req.params.id).populate('client product campaign luna_izquierda luna_derecha tratamientos');
+    const sale = await Sale.findById(req.params.id).populate('client product producto2 campaign luna_izquierda luna_derecha tratamientos');
     if (!sale) {
       return res.status(404).send('Sale not found');
     }

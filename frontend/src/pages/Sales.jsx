@@ -12,7 +12,7 @@ const Sales = () => {
   const [tratamientos, setTratamientos] = useState([]);
   const [client, setClient] = useState('');
   const [product, setProduct] = useState('');
-  const [quantity, setQuantity] = useState('');
+  const [producto2, setProducto2] = useState('');
   const [status, setStatus] = useState('reserved');
   const [campaign, setCampaign] = useState('');
   const [lunaIzquierda, setLunaIzquierda] = useState('');
@@ -100,7 +100,14 @@ const Sales = () => {
     if (product) {
       const selectedProduct = products.find(p => p._id === product);
       if (selectedProduct) {
-        total += selectedProduct.price * (quantity || 1);
+        total += selectedProduct.price;
+      }
+    }
+
+    if (producto2) {
+      const selectedProduct2 = products.find(p => p._id === producto2);
+      if (selectedProduct2) {
+        total += selectedProduct2.price;
       }
     }
 
@@ -126,7 +133,7 @@ const Sales = () => {
     });
 
     setTotalPrice(total);
-  }, [product, quantity, lunaIzquierda, lunaDerecha, selectedTratamientos, products, lunas, tratamientos]);
+  }, [product, producto2, lunaIzquierda, lunaDerecha, selectedTratamientos, products, lunas, tratamientos]);
 
   const handleCampaignChange = (e) => {
     const selectedCampaign = e.target.value;
@@ -137,7 +144,7 @@ const Sales = () => {
   const handleCreateOrUpdateSale = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
-    if (!product && !lunaIzquierda && !lunaDerecha) {
+    if (!product && !producto2 && !lunaIzquierda && !lunaDerecha) {
       setError('Debe seleccionar al menos un producto o una luna.');
       return;
     }
@@ -151,14 +158,16 @@ const Sales = () => {
       const saleData = {
         client,
         product,
-        quantity,
+        producto2: producto2 || undefined, // Campo opcional
         status,
         campaign,
         luna_izquierda: lunaIzquierda,
         luna_derecha: lunaDerecha,
-        tratamientos: selectedTratamientos,
+        tratamientos: selectedTratamientos.length > 0 ? selectedTratamientos : undefined, // Campo opcional
         total: totalPrice,
       };
+
+      console.log('Sending sale data:', saleData); // Log para verificar los datos enviados
 
       if (editingSale) {
         const response = await axios.put(
@@ -186,7 +195,7 @@ const Sales = () => {
       }
       setClient('');
       setProduct('');
-      setQuantity('');
+      setProducto2('');
       setStatus('reserved');
       setCampaign('');
       setLunaIzquierda('');
@@ -195,15 +204,15 @@ const Sales = () => {
       setTotalPrice(0);
       setError('');
     } catch (error) {
+      console.error('Error creating or updating sale:', error);
       setError('Error al crear o actualizar la venta.');
-      console.error(error);
     }
   };
 
   const handleEditSale = (sale) => {
     setClient(sale.client._id);
     setProduct(sale.product._id);
-    setQuantity(sale.quantity);
+    setProducto2(sale.producto2 ? sale.producto2._id : '');
     setStatus(sale.status);
     setCampaign(sale.campaign._id);
     setLunaIzquierda(sale.luna_izquierda._id);
@@ -238,7 +247,7 @@ const Sales = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleCreateOrUpdateSale}>
         <div>
-          <label>Campaign</label>
+          <label>Campaña</label>
           <select value={campaign} onChange={handleCampaignChange} required>
             <option value="">Select Campaign</option>
             {campaigns.map(campaign => (
@@ -247,7 +256,7 @@ const Sales = () => {
           </select>
         </div>
         <div>
-          <label>Client</label>
+          <label>Cliente</label>
           <select value={client} onChange={(e) => setClient(e.target.value)} required>
             <option value="">Select Client</option>
             {clients.map(client => (
@@ -256,7 +265,7 @@ const Sales = () => {
           </select>
         </div>
         <div>
-          <label>Product</label>
+          <label>Montura</label>
           <select value={product} onChange={(e) => setProduct(e.target.value)}>
             <option value="">Select Product</option>
             {products.map(product => (
@@ -265,12 +274,13 @@ const Sales = () => {
           </select>
         </div>
         <div>
-          <label>Quantity</label>
-          <input
-            type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-          />
+          <label>Montura extra</label>
+          <select value={producto2} onChange={(e) => setProducto2(e.target.value)}>
+            <option value="">Select Product 2</option>
+            {products.map(product => (
+              <option key={product._id} value={product._id}>{product.name}</option>
+            ))}
+          </select>
         </div>
         <div>
           <label>Status</label>
@@ -314,7 +324,7 @@ const Sales = () => {
       <ul>
         {sales.map((sale) => (
           <li key={sale._id}>
-            {sale.client.name} - {sale.product.name} - {sale.luna_izquierda.descripcion} - {sale.luna_derecha.descripcion} - {sale.status} - ${sale.total}
+            {sale.client.name} - {sale.product.name} - {sale.producto2 ? sale.producto2.name : 'N/A'} - {sale.luna_izquierda.descripcion} - {sale.luna_derecha.descripcion} - {sale.status} - ${sale.total}
             <button onClick={() => handleEditSale(sale)}>Edit</button>
             <button onClick={() => handleDeleteSale(sale._id)}>Delete</button>
           </li>
