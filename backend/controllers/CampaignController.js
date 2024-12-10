@@ -13,7 +13,13 @@ exports.createCampaign = async (req, res) => {
 
 exports.getCampaigns = async (req, res) => {
   try {
-    const campaigns = await Campaign.find();
+    const { name } = req.query;
+    let campaigns;
+    if (name) {
+      campaigns = await Campaign.find({ name: new RegExp(name, 'i') });
+    } else {
+      campaigns = await Campaign.find();
+    }
     res.status(200).send(campaigns);
   } catch (error) {
     res.status(500).send({ message: 'Error fetching campaigns', error });

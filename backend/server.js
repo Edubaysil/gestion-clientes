@@ -19,6 +19,7 @@ const productRoutes = require('./routes/products');
 const saleRoutes = require('./routes/sales');
 const lunasRoutes = require('./routes/lunas');
 const tratamientoRoutes = require('./routes/tratamientos');
+const reporteRoutes = require('./routes/reportes');
 
 app.use('/api/users', userRoutes);
 app.use('/api/campaigns', campaignRoutes);
@@ -27,6 +28,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/sales', saleRoutes);
 app.use('/api/lunas', lunasRoutes);
 app.use('/api/tratamientos', tratamientoRoutes);
+app.use('/api/reportes', reporteRoutes);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {

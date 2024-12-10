@@ -8,6 +8,7 @@ import Products from '../pages/Products';
 import Sales from '../pages/Sales';
 import Lunas from '../pages/Lunas';
 import Tratamientos from '../pages/Tratamientos';
+import Reporte from '../pages/Reporte';
 import NoNavbarLayout from '../layouts/NoNavbarLayout';
 import MainLayout from '../layouts/MainLayout';
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -48,6 +49,11 @@ export const AppRouter = () => {
         <Route path="/tratamientos" element={
           <ProtectedRoute>
             <Tratamientos />
+          </ProtectedRoute>
+        } />
+        <Route path="/reporte" element={
+          <ProtectedRoute>
+            <Reporte />
           </ProtectedRoute>
         } />
       </Route>
