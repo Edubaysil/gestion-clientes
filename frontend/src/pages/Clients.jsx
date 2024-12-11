@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Container, Grid, Paper, Typography, FormControl, TextField, InputLabel, Select, MenuItem, Box, FormControlLabel, Checkbox, Button } from '@mui/material';
 
 const Clients = () => {
   const [clients, setClients] = useState([]);
@@ -194,254 +195,350 @@ const Clients = () => {
   };
 
   return (
-    <div>
-      <h1>Clients</h1>
-      <form onSubmit={handleCreateOrUpdateClient}>
-        <div>
-          <label>Nombre</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Correo</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>Telefono</label>
-          <input
-            type="text"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Edad</label>
-          <input
-            type="number"
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Dirección</label>
-          <input
-            type="text"
-            value={direccion}
-            onChange={(e) => setDireccion(e.target.value)}
-          />
-        </div>
-        <div>
-          <label>Campaña</label>
-          <select value={campaign} onChange={(e) => setCampaign(e.target.value)} required>
-            <option value="">Select Campaign</option>
-            {campaigns.map(campaign => (
-              <option key={campaign._id} value={campaign._id}>{campaign.name}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <h3>Medida de Lejos</h3>
-          <div>
-            <h4>Ojo Derecho</h4>
-            <label>Esfera</label>
-            <input
-              type="number"
-              value={farMeasurements.ojo_derecho.esfera || ''}
-              onChange={(e) => handleMeasurementChange('far', 'ojo_derecho', 'esfera', e.target.value)}
-            />
-            <label>Cilindro</label>
-            <input
-              type="number"
-              value={farMeasurements.ojo_derecho.cilindro || ''}
-              onChange={(e) => handleMeasurementChange('far', 'ojo_derecho', 'cilindro', e.target.value)}
-            />
-            <label>Eje</label>
-            <input
-              type="number"
-              value={farMeasurements.ojo_derecho.eje || ''}
-              onChange={(e) => handleMeasurementChange('far', 'ojo_derecho', 'eje', e.target.value)}
-            />
-            <label>DIP</label>
-            <input
-              type="number"
-              value={farMeasurements.ojo_derecho.dip || ''}
-              onChange={(e) => handleMeasurementChange('far', 'ojo_derecho', 'dip', e.target.value)}
-            />
-            <label>ADD</label>
-            <input
-              type="number"
-              value={farMeasurements.ojo_derecho.add || ''}
-              onChange={(e) => handleMeasurementChange('far', 'ojo_derecho', 'add', e.target.value)}
-            />
-          </div>
-          <div>
-            <h4>Ojo Izquierdo</h4>
-            <label>Esfera</label>
-            <input
-              type="number"
-              value={farMeasurements.ojo_izquierdo.esfera || ''}
-              onChange={(e) => handleMeasurementChange('far', 'ojo_izquierdo', 'esfera', e.target.value)}
-            />
-            <label>Cilindro</label>
-            <input
-              type="number"
-              value={farMeasurements.ojo_izquierdo.cilindro || ''}
-              onChange={(e) => handleMeasurementChange('far', 'ojo_izquierdo', 'cilindro', e.target.value)}
-            />
-            <label>Eje</label>
-            <input
-              type="number"
-              value={farMeasurements.ojo_izquierdo.eje || ''}
-              onChange={(e) => handleMeasurementChange('far', 'ojo_izquierdo', 'eje', e.target.value)}
-            />
-            <label>DIP</label>
-            <input
-              type="number"
-              value={farMeasurements.ojo_izquierdo.dip || ''}
-              onChange={(e) => handleMeasurementChange('far', 'ojo_izquierdo', 'dip', e.target.value)}
-            />
-            <label>ADD</label>
-            <input
-              type="number"
-              value={farMeasurements.ojo_izquierdo.add || ''}
-              onChange={(e) => handleMeasurementChange('far', 'ojo_izquierdo', 'add', e.target.value)}
-            />
-          </div>
-        </div>
-        <div>
-          <h3>Medida de Cerca</h3>
-          <div>
-            <h4>Ojo Derecho</h4>
-            <label>Esfera</label>
-            <input
-              type="number"
-              value={nearMeasurements.ojo_derecho.esfera || ''}
-              onChange={(e) => handleMeasurementChange('near', 'ojo_derecho', 'esfera', e.target.value)}
-            />
-            <label>Cilindro</label>
-            <input
-              type="number"
-              value={nearMeasurements.ojo_derecho.cilindro || ''}
-              onChange={(e) => handleMeasurementChange('near', 'ojo_derecho', 'cilindro', e.target.value)}
-            />
-            <label>Eje</label>
-            <input
-              type="number"
-              value={nearMeasurements.ojo_derecho.eje || ''}
-              onChange={(e) => handleMeasurementChange('near', 'ojo_derecho', 'eje', e.target.value)}
-            />
-            <label>DIP</label>
-            <input
-              type="number"
-              value={nearMeasurements.ojo_derecho.dip || ''}
-              onChange={(e) => handleMeasurementChange('near', 'ojo_derecho', 'dip', e.target.value)}
-            />
-            <label>ADD</label>
-            <input
-              type="number"
-              value={nearMeasurements.ojo_derecho.add || ''}
-              onChange={(e) => handleMeasurementChange('near', 'ojo_derecho', 'add', e.target.value)}
-            />
-          </div>
-          <div>
-            <h4>Ojo Izquierdo</h4>
-            <label>Esfera</label>
-            <input
-              type="number"
-              value={nearMeasurements.ojo_izquierdo.esfera || ''}
-              onChange={(e) => handleMeasurementChange('near', 'ojo_izquierdo', 'esfera', e.target.value)}
-            />
-            <label>Cilindro</label>
-            <input
-              type="number"
-              value={nearMeasurements.ojo_izquierdo.cilindro || ''}
-              onChange={(e) => handleMeasurementChange('near', 'ojo_izquierdo', 'cilindro', e.target.value)}
-            />
-            <label>Eje</label>
-            <input
-              type="number"
-              value={nearMeasurements.ojo_izquierdo.eje || ''}
-              onChange={(e) => handleMeasurementChange('near', 'ojo_izquierdo', 'eje', e.target.value)}
-            />
-            <label>DIP</label>
-            <input
-              type="number"
-              value={nearMeasurements.ojo_izquierdo.dip || ''}
-              onChange={(e) => handleMeasurementChange('near', 'ojo_izquierdo', 'dip', e.target.value)}
-            />
-            <label>ADD</label>
-            <input
-              type="number"
-              value={nearMeasurements.ojo_izquierdo.add || ''}
-              onChange={(e) => handleMeasurementChange('near', 'ojo_izquierdo', 'add', e.target.value)}
-            />
-          </div>
-        </div>
-        <div>
-          <h3>Condiciones</h3>
-          <label>
-            <input
-              type="checkbox"
-              checked={conditions.miopia}
-              onChange={() => handleConditionChange('miopia')}
-            />
-            Miopia
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={conditions.astigmatismo}
-              onChange={() => handleConditionChange('astigmatismo')}
-            />
-            Astigmatismo
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={conditions.hipermetropia}
-              onChange={() => handleConditionChange('hipermetropia')}
-            />
-            Hipermetropia
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={conditions.presbicia}
-              onChange={() => handleConditionChange('presbicia')}
-            />
-            Presbicia
-          </label>
-        </div>
-        <div>
-          <label>Anotaciones</label>
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            maxLength="300"
-          />
-        </div>
-        <button type="submit">{editingClient ? 'Update' : 'Create'} Client</button>
-      </form>
-      <ul>
-        {clients.map((client) => (
-          <li key={client._id}>
-            {client.name}
-            <button onClick={() => handleEditClient(client)}>Edit</button>
-            <button onClick={() => handleDeleteClient(client._id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Container maxWidth="lg" style={{ marginTop: '2rem' }}>
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={6}>
+          <Paper elevation={3} style={{ padding: '2rem', borderRadius: '10px', backgroundColor: 'var(--color-background)' }}>
+            <Typography variant="h4" gutterBottom style={{ color: 'var(--color-primary)' }}>Clientes</Typography>
+            <form onSubmit={handleCreateOrUpdateClient}>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Nombre"
+                  type="text"
+                  fullWidth
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                  InputProps={{ style: { color: 'var(--color-primary)' } }}
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Correo"
+                  type="email"
+                  fullWidth
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                  InputProps={{ style: { color: 'var(--color-primary)' } }}
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Telefono"
+                  type="text"
+                  fullWidth
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                  InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                  InputProps={{ style: { color: 'var(--color-primary)' } }}
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Edad"
+                  type="number"
+                  fullWidth
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                  required
+                  InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                  InputProps={{ style: { color: 'var(--color-primary)' } }}
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Dirección"
+                  type="text"
+                  fullWidth
+                  value={direccion}
+                  onChange={(e) => setDireccion(e.target.value)}
+                  InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                  InputProps={{ style: { color: 'var(--color-primary)' } }}
+                />
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel style={{ color: 'var(--color-primary)' }}>Campaña</InputLabel>
+                <Select
+                  value={campaign}
+                  onChange={(e) => setCampaign(e.target.value)}
+                  required
+                  style={{ color: 'var(--color-primary)' }}
+                >
+                  <MenuItem value="">Select Campaign</MenuItem>
+                  {campaigns.map(campaign => (
+                    <MenuItem key={campaign._id} value={campaign._id}>{campaign.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Box mt={2}>
+                <Typography variant="h6" gutterBottom style={{ color: 'var(--color-primary)' }}>Medida de Lejos</Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <Typography variant="subtitle1" gutterBottom style={{ color: 'var(--color-primary)' }}>Ojo Derecho</Typography>
+                    <TextField
+                      label="Esfera"
+                      type="number"
+                      fullWidth
+                      value={farMeasurements.ojo_derecho.esfera || ''}
+                      onChange={(e) => handleMeasurementChange('far', 'ojo_derecho', 'esfera', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="Cilindro"
+                      type="number"
+                      fullWidth
+                      value={farMeasurements.ojo_derecho.cilindro || ''}
+                      onChange={(e) => handleMeasurementChange('far', 'ojo_derecho', 'cilindro', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="Eje"
+                      type="number"
+                      fullWidth
+                      value={farMeasurements.ojo_derecho.eje || ''}
+                      onChange={(e) => handleMeasurementChange('far', 'ojo_derecho', 'eje', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="DIP"
+                      type="number"
+                      fullWidth
+                      value={farMeasurements.ojo_derecho.dip || ''}
+                      onChange={(e) => handleMeasurementChange('far', 'ojo_derecho', 'dip', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="ADD"
+                      type="number"
+                      fullWidth
+                      value={farMeasurements.ojo_derecho.add || ''}
+                      onChange={(e) => handleMeasurementChange('far', 'ojo_derecho', 'add', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography variant="subtitle1" gutterBottom style={{ color: 'var(--color-primary)' }}>Ojo Izquierdo</Typography>
+                    <TextField
+                      label="Esfera"
+                      type="number"
+                      fullWidth
+                      value={farMeasurements.ojo_izquierdo.esfera || ''}
+                      onChange={(e) => handleMeasurementChange('far', 'ojo_izquierdo', 'esfera', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="Cilindro"
+                      type="number"
+                      fullWidth
+                      value={farMeasurements.ojo_izquierdo.cilindro || ''}
+                      onChange={(e) => handleMeasurementChange('far', 'ojo_izquierdo', 'cilindro', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="Eje"
+                      type="number"
+                      fullWidth
+                      value={farMeasurements.ojo_izquierdo.eje || ''}
+                      onChange={(e) => handleMeasurementChange('far', 'ojo_izquierdo', 'eje', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="DIP"
+                      type="number"
+                      fullWidth
+                      value={farMeasurements.ojo_izquierdo.dip || ''}
+                      onChange={(e) => handleMeasurementChange('far', 'ojo_izquierdo', 'dip', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="ADD"
+                      type="number"
+                      fullWidth
+                      value={farMeasurements.ojo_izquierdo.add || ''}
+                      onChange={(e) => handleMeasurementChange('far', 'ojo_izquierdo', 'add', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
+              <Box mt={2}>
+                <Typography variant="h6" gutterBottom style={{ color: 'var(--color-primary)' }}>Medida de Cerca</Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    <Typography variant="subtitle1" gutterBottom style={{ color: 'var(--color-primary)' }}>Ojo Derecho</Typography>
+                    <TextField
+                      label="Esfera"
+                      type="number"
+                      fullWidth
+                      value={nearMeasurements.ojo_derecho.esfera || ''}
+                      onChange={(e) => handleMeasurementChange('near', 'ojo_derecho', 'esfera', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="Cilindro"
+                      type="number"
+                      fullWidth
+                      value={nearMeasurements.ojo_derecho.cilindro || ''}
+                      onChange={(e) => handleMeasurementChange('near', 'ojo_derecho', 'cilindro', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="Eje"
+                      type="number"
+                      fullWidth
+                      value={nearMeasurements.ojo_derecho.eje || ''}
+                      onChange={(e) => handleMeasurementChange('near', 'ojo_derecho', 'eje', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="DIP"
+                      type="number"
+                      fullWidth
+                      value={nearMeasurements.ojo_derecho.dip || ''}
+                      onChange={(e) => handleMeasurementChange('near', 'ojo_derecho', 'dip', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="ADD"
+                      type="number"
+                      fullWidth
+                      value={nearMeasurements.ojo_derecho.add || ''}
+                      onChange={(e) => handleMeasurementChange('near', 'ojo_derecho', 'add', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography variant="subtitle1" gutterBottom style={{ color: 'var(--color-primary)' }}>Ojo Izquierdo</Typography>
+                    <TextField
+                      label="Esfera"
+                      type="number"
+                      fullWidth
+                      value={nearMeasurements.ojo_izquierdo.esfera || ''}
+                      onChange={(e) => handleMeasurementChange('near', 'ojo_izquierdo', 'esfera', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="Cilindro"
+                      type="number"
+                      fullWidth
+                      value={nearMeasurements.ojo_izquierdo.cilindro || ''}
+                      onChange={(e) => handleMeasurementChange('near', 'ojo_izquierdo', 'cilindro', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="Eje"
+                      type="number"
+                      fullWidth
+                      value={nearMeasurements.ojo_izquierdo.eje || ''}
+                      onChange={(e) => handleMeasurementChange('near', 'ojo_izquierdo', 'eje', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="DIP"
+                      type="number"
+                      fullWidth
+                      value={nearMeasurements.ojo_izquierdo.dip || ''}
+                      onChange={(e) => handleMeasurementChange('near', 'ojo_izquierdo', 'dip', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                    <TextField
+                      label="ADD"
+                      type="number"
+                      fullWidth
+                      value={nearMeasurements.ojo_izquierdo.add || ''}
+                      onChange={(e) => handleMeasurementChange('near', 'ojo_izquierdo', 'add', e.target.value)}
+                      InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                      InputProps={{ style: { color: 'var(--color-primary)' } }}
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
+              <Box mt={2}>
+                <Typography variant="h6" gutterBottom style={{ color: 'var(--color-primary)' }}>Observaciones</Typography>
+                <FormControlLabel
+                  control={<Checkbox checked={conditions.miopia} onChange={() => handleConditionChange('miopia')} />}
+                  label="Miopia"
+                  style={{ color: 'var(--color-primary)' }}
+                />
+                <FormControlLabel
+                  control={<Checkbox checked={conditions.astigmatismo} onChange={() => handleConditionChange('astigmatismo')} />}
+                  label="Astigmatismo"
+                  style={{ color: 'var(--color-primary)' }}
+                />
+                <FormControlLabel
+                  control={<Checkbox checked={conditions.hipermetropia} onChange={() => handleConditionChange('hipermetropia')} />}
+                  label="Hipermetropia"
+                  style={{ color: 'var(--color-primary)' }}
+                />
+                <FormControlLabel
+                  control={<Checkbox checked={conditions.presbicia} onChange={() => handleConditionChange('presbicia')} />}
+                  label="Presbicia"
+                  style={{ color: 'var(--color-primary)' }}
+                />
+              </Box>
+              <FormControl fullWidth margin="normal">
+                <TextField
+                  label="Anotaciones"
+                  type="text"
+                  fullWidth
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  multiline
+                  rows={4}
+                  InputLabelProps={{ style: { color: 'var(--color-primary)' } }}
+                  InputProps={{ style: { color: 'var(--color-primary)' } }}
+                />
+              </FormControl>
+              <Button type="submit" variant="contained" fullWidth style={{ marginTop: '1rem', backgroundColor: 'var(--color-primary)', color: 'white' }}>
+                {editingClient ? 'Actualizar' : 'Crear'} Cliente
+              </Button>
+            </form>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Box>
+            <Typography variant="h5" gutterBottom style={{ color: 'var(--color-primary)' }}>Lista de Clientes</Typography>
+            <Paper elevation={3} style={{ padding: '2rem', borderRadius: '10px', backgroundColor: 'var(--color-background)' }}>
+              <ul>
+                {clients.map((client) => (
+                  <li key={client._id} style={{ marginBottom: '1rem' }}>
+                    <Typography variant="body1" style={{ color: 'var(--color-text)' }}>{client.name}</Typography>
+                    <Button onClick={() => handleEditClient(client)} style={{ marginLeft: '1rem', backgroundColor: 'var(--color-secondary)', color: 'white' }}>
+                      Editar
+                    </Button>
+                    <Button onClick={() => handleDeleteClient(client._id)} style={{ marginLeft: '1rem', backgroundColor: 'var(--color-accent-dark)', color: 'white' }}>
+                      Eliminar
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </Paper>
+          </Box>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 

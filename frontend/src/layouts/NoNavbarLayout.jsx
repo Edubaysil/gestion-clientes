@@ -6,7 +6,6 @@ import { Outlet } from 'react-router-dom';
 const NoNavbarLayout = () => {
   return (
     <div>
-      <Header />
       <Outlet />
     </div>
   );

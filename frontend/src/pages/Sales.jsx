@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Container, TextField, Button, Typography, Box, Paper, Select, MenuItem, InputLabel, FormControl, Grid, Checkbox } from '@mui/material';
 
 const Sales = () => {
   const [sales, setSales] = useState([]);
@@ -32,17 +33,19 @@ const Sales = () => {
       }
 
       try {
-        const [productsResponse, lunasResponse, tratamientosResponse, campaignsResponse] = await Promise.all([
+        const [productsResponse, lunasResponse, tratamientosResponse, campaignsResponse, salesResponse] = await Promise.all([
           axios.get('/api/products', { headers: { Authorization: `Bearer ${token}` } }),
           axios.get('/api/lunas', { headers: { Authorization: `Bearer ${token}` } }),
           axios.get('/api/tratamientos', { headers: { Authorization: `Bearer ${token}` } }),
-          axios.get('/api/campaigns/active', { headers: { Authorization: `Bearer ${token}` } }), // Obtener solo campañas activas
+          axios.get('/api/campaigns/active', { headers: { Authorization: `Bearer ${token}` } }),
+          axios.get('/api/sales', { headers: { Authorization: `Bearer ${token}` } }),
         ]);
 
         setProducts(productsResponse.data);
         setLunas(lunasResponse.data);
         setTratamientos(tratamientosResponse.data);
         setCampaigns(campaignsResponse.data);
+        setSales(salesResponse.data);
       } catch (error) {
         console.error(error);
         navigate('/login');
@@ -145,8 +148,9 @@ const Sales = () => {
         total: totalPrice,
       };
 
+      let response;
       if (editingSale) {
-        const response = await axios.put(
+        response = await axios.put(
           `/api/sales/${editingSale._id}`,
           saleData,
           {
@@ -158,7 +162,7 @@ const Sales = () => {
         setSales(sales.map(s => s._id === editingSale._id ? response.data : s));
         setEditingSale(null);
       } else {
-        const response = await axios.post(
+        response = await axios.post(
           '/api/sales',
           saleData,
           {
@@ -212,109 +216,176 @@ const Sales = () => {
     }
   };
 
-  const handleTratamientoChange = (e) => {
-    const value = Array.from(e.target.selectedOptions, option => option.value);
-    setSelectedTratamientos(value);
+  const handleTratamientoChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedTratamientos(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
   };
 
   return (
-    <div>
-      <h1>Sales</h1>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleCreateOrUpdateSale}>
-        <div>
-          <label>Campaña</label>
-          <select value={campaign} onChange={handleCampaignChange} required>
-            <option value="">Select Campaign</option>
-            {campaigns.map(campaign => (
-              <option key={campaign._id} value={campaign._id}>{campaign.name}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>Cliente</label>
-          <select value={client} onChange={(e) => setClient(e.target.value)} required>
-            <option value="">Select Client</option>
-            {clients.map(client => (
-              <option key={client._id} value={client._id}>{client.name}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>Montura</label>
-          <select value={product} onChange={(e) => setProduct(e.target.value)} required>
-            <option value="">Select Product</option>
-            {products.map(product => (
-              <option key={product._id} value={product._id} disabled={product.stock === 0}>
-                {product.name} (Stock: {product.stock})
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>Montura extra</label>
-          <select value={producto2} onChange={(e) => setProducto2(e.target.value)}>
-            <option value="">Select Product 2</option>
-            {products.map(product => (
-              <option key={product._id} value={product._id} disabled={product.stock === 0}>
-                {product.name} (Stock: {product.stock})
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>Status</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} required>
-            <option value="reserved">Reserved</option>
-            <option value="to deliver">To Deliver</option>
-            <option value="delivered">Delivered</option>
-          </select>
-        </div>
-        <div>
-          <label>Luna Izquierda</label>
-          <select value={lunaIzquierda} onChange={(e) => setLunaIzquierda(e.target.value)} required>
-            <option value="">Select Luna Izquierda</option>
-            {lunas.map(luna => (
-              <option key={luna._id} value={luna._id} disabled={luna.stock === 0}>
-                {luna.descripcion} (Stock: {luna.stock})
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>Luna Derecha</label>
-          <select value={lunaDerecha} onChange={(e) => setLunaDerecha(e.target.value)} required>
-            <option value="">Select Luna Derecha</option>
-            {lunas.map(luna => (
-              <option key={luna._id} value={luna._id} disabled={luna.stock === 0}>
-                {luna.descripcion} (Stock: {luna.stock})
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>Tratamientos</label>
-          <select multiple value={selectedTratamientos} onChange={handleTratamientoChange}>
-            {tratamientos.map(tratamiento => (
-              <option key={tratamiento._id} value={tratamiento._id}>{tratamiento.nombre}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label>Total: S/{totalPrice}</label>
-        </div>
-        <button type="submit">{editingSale ? 'Update' : 'Create'} Sale</button>
-      </form>
-      <ul>
-        {sales.map((sale) => (
-          <li key={sale._id}>
-            {sale.client.name} - {sale.product.name} - {sale.producto2 ? sale.producto2.name : 'N/A'} - {sale.luna_izquierda.descripcion} - {sale.luna_derecha.descripcion} - {sale.status} - ${sale.total}
-            <button onClick={() => handleEditSale(sale)}>Edit</button>
-            <button onClick={() => handleDeleteSale(sale._id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Container maxWidth="lg" style={{ marginTop: '2rem' }}>
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={6}>
+          <Paper elevation={3} style={{ padding: '2rem', borderRadius: '10px', backgroundColor: 'var(--color-background)' }}>
+            <Typography variant="h4" gutterBottom style={{ color: 'var(--color-primary)' }}>Ventas</Typography>
+            {error && <Typography color="error">{error}</Typography>}
+            <form onSubmit={handleCreateOrUpdateSale}>
+              <FormControl fullWidth margin="normal">
+                <InputLabel style={{ color: 'var(--color-primary)' }}>Campaña</InputLabel>
+                <Select
+                  value={campaign}
+                  onChange={handleCampaignChange}
+                  required
+                  style={{ color: 'var(--color-primary)' }}
+                >
+                  <MenuItem value="">Select Campaign</MenuItem>
+                  {campaigns.map(campaign => (
+                    <MenuItem key={campaign._id} value={campaign._id}>{campaign.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel style={{ color: 'var(--color-primary)' }}>Cliente</InputLabel>
+                <Select
+                  value={client}
+                  onChange={(e) => setClient(e.target.value)}
+                  required
+                  style={{ color: 'var(--color-primary)' }}
+                >
+                  <MenuItem value="">Select Client</MenuItem>
+                  {clients.map(client => (
+                    <MenuItem key={client._id} value={client._id}>{client.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel style={{ color: 'var(--color-primary)' }}>Montura</InputLabel>
+                <Select
+                  value={product}
+                  onChange={(e) => setProduct(e.target.value)}
+                  required
+                  style={{ color: 'var(--color-primary)' }}
+                >
+                  <MenuItem value="">Select Product</MenuItem>
+                  {products.map(product => (
+                    <MenuItem key={product._id} value={product._id} disabled={product.stock === 0}>
+                      {product.name} (Stock: {product.stock})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel style={{ color: 'var(--color-primary)' }}>Montura extra</InputLabel>
+                <Select
+                  value={producto2}
+                  onChange={(e) => setProducto2(e.target.value)}
+                  style={{ color: 'var(--color-primary)' }}
+                >
+                  <MenuItem value="">Select Product 2</MenuItem>
+                  {products.map(product => (
+                    <MenuItem key={product._id} value={product._id} disabled={product.stock === 0}>
+                      {product.name} (Stock: {product.stock})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel style={{ color: 'var(--color-primary)' }}>Status</InputLabel>
+                <Select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  required
+                  style={{ color: 'var(--color-primary)' }}
+                >
+                  <MenuItem value="reserved">Reserved</MenuItem>
+                  <MenuItem value="to deliver">To Deliver</MenuItem>
+                  <MenuItem value="delivered">Delivered</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel style={{ color: 'var(--color-primary)' }}>Luna Izquierda</InputLabel>
+                <Select
+                  value={lunaIzquierda}
+                  onChange={(e) => setLunaIzquierda(e.target.value)}
+                  required
+                  style={{ color: 'var(--color-primary)' }}
+                >
+                  <MenuItem value="">Select Luna Izquierda</MenuItem>
+                  {lunas.map(luna => (
+                    <MenuItem key={luna._id} value={luna._id} disabled={luna.stock === 0}>
+                      {luna.descripcion} (Stock: {luna.stock})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel style={{ color: 'var(--color-primary)' }}>Luna Derecha</InputLabel>
+                <Select
+                  value={lunaDerecha}
+                  onChange={(e) => setLunaDerecha(e.target.value)}
+                  required
+                  style={{ color: 'var(--color-primary)' }}
+                >
+                  <MenuItem value="">Select Luna Derecha</MenuItem>
+                  {lunas.map(luna => (
+                    <MenuItem key={luna._id} value={luna._id} disabled={luna.stock === 0}>
+                      {luna.descripcion} (Stock: {luna.stock})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth margin="normal">
+                <InputLabel style={{ color: 'var(--color-primary)' }}>Tratamientos</InputLabel>
+                <Select
+                  multiple
+                  value={selectedTratamientos}
+                  onChange={handleTratamientoChange}
+                  style={{ color: 'var(--color-primary)' }}
+                  renderValue={(selected) => selected.map(id => tratamientos.find(t => t._id === id)?.nombre).join(', ')}
+                >
+                  {tratamientos.map(tratamiento => (
+                    <MenuItem key={tratamiento._id} value={tratamiento._id}>
+                      <Checkbox checked={selectedTratamientos.indexOf(tratamiento._id) > -1} />
+                      <Typography>{tratamiento.nombre}</Typography>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Typography variant="h6" gutterBottom style={{ color: 'var(--color-primary)' }}>Total: S/{totalPrice}</Typography>
+              <Button type="submit" variant="contained" fullWidth style={{ marginTop: '1rem', backgroundColor: 'var(--color-primary)', color: 'white' }}>
+                {editingSale ? 'Actualizar' : 'Crear'} Venta
+              </Button>
+            </form>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Box>
+            <Typography variant="h5" gutterBottom style={{ color: 'var(--color-primary)' }}>Lista de Ventas</Typography>
+            <Paper elevation={3} style={{ padding: '2rem', borderRadius: '10px', backgroundColor: 'var(--color-background)' }}>
+              <ul>
+                {sales.map((sale) => (
+                  <li key={sale._id} style={{ marginBottom: '1rem' }}>
+                    <Typography variant="body1" style={{ color: 'var(--color-text)' }}>
+                      {sale.client?.name || 'N/A'} - {sale.product?.name || 'N/A'} - {sale.producto2 ? sale.producto2.name : 'N/A'} - {sale.luna_izquierda?.descripcion || 'N/A'} - {sale.luna_derecha?.descripcion || 'N/A'} - {sale.status} - ${sale.total}
+                    </Typography>
+                    <Button onClick={() => handleEditSale(sale)} style={{ marginLeft: '1rem', backgroundColor: 'var(--color-secondary)', color: 'white' }}>
+                      Editar
+                    </Button>
+                    <Button onClick={() => handleDeleteSale(sale._id)} style={{ marginLeft: '1rem', backgroundColor: 'var(--color-accent-dark)', color: 'white' }}>
+                      Eliminar
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </Paper>
+          </Box>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 
